@@ -263,7 +263,10 @@ class DraggableFlatList<T> extends React.Component<Props<T>, State> {
   };
 
   componentDidUpdate = async (prevProps: Props<T>, prevState: State) => {
-    if (prevProps.data !== this.props.data) {
+    const layoutInvalidationKeyHasChanged =
+      prevProps.layoutInvalidationKey !== this.props.layoutInvalidationKey;
+
+    if (prevProps.data !== this.props.data || layoutInvalidationKeyHasChanged) {
       this.props.data.forEach((item, index) => {
         const key = this.keyExtractor(item, index);
         this.keyToIndex.set(key, index);
@@ -271,8 +274,6 @@ class DraggableFlatList<T> extends React.Component<Props<T>, State> {
       // Remeasure on next paint
       this.updateCellData(this.props.data);
       onNextFrame(this.flushQueue);
-      const layoutInvalidationKeyHasChanged =
-        prevProps.layoutInvalidationKey !== this.props.layoutInvalidationKey;
 
       if (
         layoutInvalidationKeyHasChanged ||
